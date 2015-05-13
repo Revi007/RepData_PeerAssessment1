@@ -6,7 +6,6 @@ output:
 ---
 
 ``` {r setting_options, echo=FALSE, include=FALSE}
-        setwd("C:/Revi/_Personal/Coursera/Reproducible_data/P1")
         Sys.setlocale("LC_TIME", "USA")
         library(dplyr)
         library(tidyr)
