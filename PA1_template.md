@@ -1,27 +1,12 @@
----
-title: "Reproducible Research: Peer Assessment 1"
-output: 
-  html_document:
-    keep_md: true
----
+# Reproducible Research: Peer Assessment 1
 
-``` {r setting_options, echo=FALSE, include=FALSE}
-        setwd("C:/Revi/_Personal/Coursera/Reproducible_data/P1")
-        Sys.setlocale("LC_TIME", "USA")
-        library(dplyr)
-        library(tidyr)
-        library(lubridate)
-        library(ggplot2)
-        library(lattice)
-        knitr::opts_chunk$set(
-                      echo=TRUE, warning=FALSE, message=FALSE)
-```
+
 ## Loading and preprocessing the data
 
-```{r loading_data, echo=TRUE}
+
+```r
         data<-read.csv("activity.csv")
         activity<-tbl_df(data)
-       
 ```
 
 
@@ -29,7 +14,8 @@ output:
 ## What is mean total number of steps taken per day?
 
 
-```{r total_steps_per_day}
+
+```r
         # Grouping the data  per day and summarize the total number of steps per day
         by_date<-group_by(activity, date)
         s<-summarise(by_date, totalSteps = sum(steps, na.rm=TRUE))
@@ -44,13 +30,14 @@ output:
                 xlab("Total daily steps") + 
                 ylab("Frequency") +
                 theme(legend.position ="none")
-       
 ```
 
+![](PA1_template_files/figure-html/total_steps_per_day-1.png) 
 
-The mean of the total number of steps taken each day is  **`r mean`**.
 
-The median of the total number of steps taken each day is **`r median`**.
+The mean of the total number of steps taken each day is  **9354.23**.
+
+The median of the total number of steps taken each day is **10395**.
 
 
 
@@ -58,7 +45,8 @@ The median of the total number of steps taken each day is **`r median`**.
 ## What is the average daily activity pattern?
 
 
-```{r average_daily_activity}
+
+```r
         # Grouping the data  per interval and calculating the mean steps number in each interval
         by_intv<-group_by(activity, interval)
         m<-summarise(by_intv, averageSteps = mean(steps, na.rm=TRUE))
@@ -68,25 +56,27 @@ The median of the total number of steps taken each day is **`r median`**.
         
         # Plotting the average steps number as a function ofthe daily interval using qplot 
         qplot(interval,averageSteps, data=m, geom="line", xlab="Interval", ylab="Average steps count")
-       
 ```
 
-The interval **`r max_intv`** contains the maximum number of steps on average across all the days in the dataset.
+![](PA1_template_files/figure-html/average_daily_activity-1.png) 
+
+The interval **835** contains the maximum number of steps on average across all the days in the dataset.
 
 
 
 ## Imputing missing values
-```{r missing values}
+
+```r
         # Counting rows with missing steps 
         missing_rows<-nrow(subset(activity,is.na(steps)))
-       
 ```
 
-The numbers of rows with missing values (reported as NA) is **`r missing_rows`**.
+The numbers of rows with missing values (reported as NA) is **2304**.
 
 
 
-```{r imputing_missing_values}
+
+```r
         # Imputation of missing values - 
         # imputation method - each NA will be replaced with the average steps number
         # of the same interval accross all days in the dataset
@@ -109,12 +99,13 @@ The numbers of rows with missing values (reported as NA) is **`r missing_rows`**
         h + geom_histogram(aes(fill = 13)) + 
             xlab("Total daily steps - missing values impute to interval average ")  +
             theme(legend.position ="none")
-
 ```
 
-The mean of the total number of steps taken each day after imputation of the missing values is  **`r mean_imp`**.
+![](PA1_template_files/figure-html/imputing_missing_values-1.png) 
 
-The median value of the total number of steps taken each day after imputation of the missing values is **`r median_imp`**.
+The mean of the total number of steps taken each day after imputation of the missing values is  **10766.19**.
+
+The median value of the total number of steps taken each day after imputation of the missing values is **10766.19**.
 
 These two values are higher after imputating the missing data and represent a more normal distribution.
 
@@ -122,7 +113,8 @@ These two values are higher after imputating the missing data and represent a mo
 
 ## Are there differences in activity patterns between weekdays and weekends?
 
-```{r adding factor variable}
+
+```r
         # Adding new variables to the imputated data of week day 'DAY', 
         # and the weekday/weekend variable 'WD
         w<-by_date_impute %>% mutate(Day = weekdays(as.Date(date, "%Y-%m-%d")), 
@@ -141,5 +133,6 @@ These two values are higher after imputating the missing data and represent a mo
         xyplot(averageSteps ~interval | WD, by_wd_ave, 
                layout=c(1,2), type="l", 
                ylab = "Number of Steps")
-
 ```
+
+![](PA1_template_files/figure-html/adding factor variable-1.png) 
